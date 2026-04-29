@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍎</text></svg>">
+    <title>About - Apple Leaf Detector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            background: linear-gradient(135deg, rgba(227, 59, 38, 0.05) 0%, rgba(111, 174, 71, 0.05) 100%);
+        }
+
+        /* Background Image with Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=600');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        /* Apple Theme Colors */
+        :root {
+            --apple-red: #e33b26;
+            --apple-green: #6fae47;
+            --apple-yellow: #fbb93b;
+            --apple-brown: #8b5a2b;
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --shadow: 0 10px 30px rgba(227, 59, 38, 0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-bottom: 4px solid var(--apple-red);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "🍎";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8em;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .header h1 span {
+            color: var(--apple-red);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        /* Content */
+        .content {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(227, 59, 38, 0.1);
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding-bottom: 30px;
+            border-bottom: 2px solid rgba(227, 59, 38, 0.1);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section h2 {
+            font-size: 2em;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2 span {
+            color: var(--apple-red);
+        }
+
+        .section h2 i {
+            font-size: 1.2em;
+        }
+
+        /* Fix List */
+        .fix-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .fix-list li {
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--apple-green);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fix-list li:hover {
+            transform: translateX(5px);
+            box-shadow: 0 10px 25px rgba(111, 174, 71, 0.2);
+        }
+
+        .fix-list li strong {
+            color: var(--apple-green);
+            font-size: 1.1em;
+        }
+
+        .fix-list li::before {
+            content: "🍏";
+            font-size: 1.5em;
+        }
+
+        /* Disease Classes Grid */
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .class-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 1px solid rgba(227, 59, 38, 0.1);
+        }
+
+        .class-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(227, 59, 38, 0.2);
+        }
+
+        .class-card:nth-child(1) {
+            border-top: 4px solid var(--apple-red);
+        }
+
+        .class-card:nth-child(2) {
+            border-top: 4px solid var(--apple-green);
+        }
+
+        .class-card:nth-child(3) {
+            border-top: 4px solid var(--apple-yellow);
+        }
+
+        .class-card:nth-child(4) {
+            border-top: 4px solid var(--apple-brown);
+        }
+
+        .class-card h3 {
+            background: linear-gradient(135deg, #f8f9fa, white);
+            padding: 20px;
+            margin: 0;
+            color: var(--text-dark);
+            font-size: 1.4em;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .class-card p {
+            padding: 20px;
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+            min-height: 100px;
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eee;
+            transition: all 0.3s;
+        }
+
+        .tech-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--apple-red);
+        }
+
+        .tech-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .tech-name {
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .tech-desc {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--apple-green);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: "🍏";
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            font-size: 8em;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+
+        .footer p {
+            color: #666;
+            margin: 10px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer .highlight {
+            color: var(--apple-red);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* Navigation */
+        .nav {
+            margin: 30px 0 20px;
+            text-align: center;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: var(--text-dark);
+            text-decoration: none;
+            padding: 12px 30px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid transparent;
+        }
+
+        .nav a:hover {
+            background: var(--apple-red);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(227, 59, 38, 0.3);
+            border-color: var(--apple-red);
+        }
+
+        .nav a:nth-child(2):hover {
+            background: var(--apple-green);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .section h2 {
+                font-size: 1.5em;
+            }
+
+            .fix-list {
+                grid-template-columns: 1fr;
+            }
+
+            .class-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tech-stack {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .nav {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav a {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📖 <span>About</span> This Project</h1>
+            <p>🍎 Apple Leaf Disease Detection - Final Year Project</p>
+            <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                <span
+                    style="background: var(--apple-red); color: white; padding: 5px 15px; border-radius: 50px; font-size: 0.9em;">🍎
+                    95% Accuracy</span>
+                <span
+                    style="background: var(--apple-green); color: white; padding: 5px 15px; border-radius: 50px; font-size: 0.9em;">🌿
+                    4 Diseases</span>
+                <span
+                    style="background: var(--apple-yellow); color: #333; padding: 5px 15px; border-radius: 50px; font-size: 0.9em;">⚡
+                    Real-time</span>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Fixes Section -->
+            <div class="section">
+                <h2><i>✅</i> <span>All Fixes</span> Applied</h2>
+                <ul class="fix-list">
+                    <li><strong>✓ Image Size Fixed:</strong> Training and prediction both use 224x224</li>
+                    <li><strong>✓ Normalization Fixed:</strong> Images normalized to [0,1] (1/255)</li>
+                    <li><strong>✓ Class Order Fixed:</strong> JSON file ensures correct class order</li>
+                    <li><strong>✓ Confidence Threshold:</strong> {{ threshold }}% threshold for reliable predictions
+                    </li>
+                    <li><strong>✓ Model Architecture:</strong> CNN with proper layers</li>
+                    <li><strong>✓ Data Augmentation:</strong> Rotation, flip, zoom for better accuracy</li>
+                </ul>
+            </div>
+
+            <!-- Disease Classes Section -->
+            <div class="section">
+                <h2><i>📊</i> <span>Disease</span> Classes</h2>
+                <div class="class-grid">
+                    {% for class_name in class_names %}
+                    <div class="class-card">
+                        <h3>
+                            {% if loop.index == 1 %}🍎{% endif %}
+                            {% if loop.index == 2 %}🍏{% endif %}
+                            {% if loop.index == 3 %}🍂{% endif %}
+                            {% if loop.index == 4 %}🍁{% endif %}
+                            {{ class_name }}
+                        </h3>
+                        <p>{{ disease_info[class_name].description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Technology Stack Section -->
+            <div class="section">
+                <h2><i>🛠️</i> <span>Technology</span> Stack</h2>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <div class="tech-icon">🐍</div>
+                        <div class="tech-name">Python 3.8+</div>
+                        <div class="tech-desc">Core programming language</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🧠</div>
+                        <div class="tech-name">TensorFlow 2.x</div>
+                        <div class="tech-desc">Deep learning framework</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🌶️</div>
+                        <div class="tech-name">Flask</div>
+                        <div class="tech-desc">Web framework</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🎨</div>
+                        <div class="tech-name">HTML5/CSS3</div>
+                        <div class="tech-desc">Frontend design</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">📸</div>
+                        <div class="tech-name">PIL</div>
+                        <div class="tech-desc">Image processing</div>
+                    </div>
+                    <div class="tech-item">
+                        <div class="tech-icon">🗄️</div>
+                        <div class="tech-name">SQLite</div>
+                        <div class="tech-desc">Database</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav">
+                <a href="{{ url_for('landing') }}">🏠 Home</a>
+                <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('login') }}">
+                    {% if session.get('user_id') %}📊 Dashboard{% else %}🔑 Login{% endif %}
+                </a>
+                {% if session.get('user_id') %}
+                <a href="{{ url_for('history') }}">📸 History</a>
+                <a href="{{ url_for('profile') }}">👤 Profile</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="highlight">🍎 Apple Leaf Disease Detection System</p>
+            <p>Final Year Project | Artificial Intelligence</p>
+            <p style="font-size: 0.9em; margin-top: 15px;">© 2026 All Rights Reserved</p>
+        </div>
+    </div>
+</body>
+
+</html>

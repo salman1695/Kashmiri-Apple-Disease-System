@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍎</text></svg>">
+    <title>Profile - Apple Leaf Disease Detector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=600');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.08;
+            z-index: -1;
+        }
+
+        :root {
+            --apple-red: #e33b26;
+            --apple-green: #6fae47;
+            --apple-yellow: #fbb93b;
+            --text-dark: #2c3e50;
+            --shadow: 0 10px 30px rgba(227, 59, 38, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-bottom: 4px solid var(--apple-green);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: var(--text-dark);
+        }
+
+        .header h1 span {
+            color: var(--apple-red);
+        }
+
+        .nav {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: var(--text-dark);
+            text-decoration: none;
+            padding: 12px 25px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav a:hover {
+            background: var(--apple-red);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, var(--apple-red), var(--apple-green));
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4em;
+            color: white;
+            border: 4px solid white;
+            box-shadow: 0 10px 20px rgba(227, 59, 38, 0.2);
+        }
+
+        .profile-name {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .profile-username {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed var(--apple-green);
+        }
+
+        .profile-detail {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .detail-value {
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .btn-logout {
+            background: var(--apple-red);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 25px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: #c82333;
+            transform: translateY(-3px);
+        }
+
+        .history-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .history-card h2 {
+            font-size: 1.8em;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            border-left: 3px solid var(--apple-red);
+        }
+
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--apple-red);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th {
+            text-align: left;
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 3px solid var(--apple-green);
+        }
+
+        .history-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .history-table tr:hover td {
+            background: #f8f9fa;
+        }
+
+        .confidence-high {
+            color: var(--apple-green);
+            font-weight: bold;
+            background: #e8f5e9;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .confidence-medium {
+            color: #f57c00;
+            font-weight: bold;
+            background: #fff3e0;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .confidence-low {
+            color: var(--apple-red);
+            font-weight: bold;
+            background: #ffebee;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .view-link {
+            color: var(--apple-green);
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: #e8f5e9;
+            display: inline-block;
+        }
+
+        .view-link:hover {
+            background: var(--apple-green);
+            color: white;
+        }
+
+        .no-history {
+            text-align: center;
+            padding: 60px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            border: 2px dashed var(--apple-green);
+        }
+
+        .no-history-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background: var(--apple-green);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            background: var(--apple-red);
+        }
+
+        .footer {
+            margin-top: 30px;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .history-table {
+                font-size: 0.9em;
+            }
+
+            .history-table th,
+            .history-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>👤 <span>My Profile</span></h1>
+            <div class="nav">
+                <a href="{{ url_for('landing') }}">🏠 Home</a>
+                <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                <a href="{{ url_for('about') }}">📖 About</a>
+                <a href="{{ url_for('history') }}">📸 History</a>
+            </div>
+        </div>
+
+        <div class="profile-grid">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    {{ user.username[0]|upper if user else 'U' }}
+                </div>
+                <div class="profile-name">{{ user.full_name if user and user.full_name else (user.username if user else
+                    'User') }}</div>
+                <div class="profile-username">@{{ user.username if user else 'user' }}</div>
+
+                <div class="profile-details">
+                    <div class="profile-detail">
+                        <span class="detail-label">📧 Email</span>
+                        <span class="detail-value">{{ user.email if user else 'user@example.com' }}</span>
+                    </div>
+                    <div class="profile-detail">
+                        <span class="detail-label">📊 Total Predictions</span>
+                        <span class="detail-value">{{ history|length if history else 0 }}</span>
+                    </div>
+                    <div class="profile-detail">
+                        <span class="detail-label">🍎 Account Status</span>
+                        <span class="detail-value" style="color: var(--apple-green);">✓ Active</span>
+                    </div>
+                </div>
+
+                <form action="{{ url_for('logout') }}" method="GET">
+                    <button type="submit" class="btn-logout">🚪 Logout</button>
+                </form>
+            </div>
+
+            <!-- History Card -->
+            <div class="history-card">
+                <h2>📊 Recent Predictions</h2>
+
+                {% if history and history|length > 0 %}
+                <div class="stats-summary">
+                    <div class="stat-box">
+                        <div class="stat-number">{{ history|length }}</div>
+                        <div class="stat-label">Total Images</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">
+                            {% set count = 0 %}
+                            {% for item in history %}
+                            {% if item.confidence >= 70 %}
+                            {% set count = count + 1 %}
+                            {% endif %}
+                            {% endfor %}
+                            {{ count }}
+                        </div>
+                        <div class="stat-label">High Confidence</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number">
+                            {% set recent = 0 %}
+                            {% for item in history %}
+                            {% if item.timestamp and '2026' in item.timestamp|string %}
+                            {% set recent = recent + 1 %}
+                            {% endif %}
+                            {% endfor %}
+                            {{ recent }}
+                        </div>
+                        <div class="stat-label">This Year</div>
+                    </div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Prediction</th>
+                                <th>Confidence</th>
+                                <th>Image</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in history %}
+                            <tr>
+                                <td>{{ item.timestamp.split(' ')[0] if item.timestamp and ' ' in item.timestamp else
+                                    item.timestamp }}</td>
+                                <td>
+                                    {% if 'HEALTHY' in item.prediction %}🍏
+                                    {% elif 'ROT' in item.prediction %}🍎
+                                    {% elif 'RUST' in item.prediction %}🍂
+                                    {% elif 'SCAB' in item.prediction %}🍁
+                                    {% endif %}
+                                    {{ item.prediction }}
+                                </td>
+                                <td>
+                                    {% if item.confidence >= 70 %}
+                                    <span class="confidence-high">{{ "%.1f"|format(item.confidence) }}%</span>
+                                    {% elif item.confidence >= 40 %}
+                                    <span class="confidence-medium">{{ "%.1f"|format(item.confidence) }}%</span>
+                                    {% else %}
+                                    <span class="confidence-low">{{ "%.1f"|format(item.confidence) }}%</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('static', filename='uploads/' + item.image_path) }}"
+                                        target="_blank" class="view-link">👁️ View</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="no-history">
+                    <div class="no-history-icon">🍃</div>
+                    <h3>No Predictions Yet</h3>
+                    <p>Start by uploading some apple leaf images!</p>
+                    <a href="{{ url_for('dashboard') }}" class="btn-primary">Go to Dashboard →</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🍎 Apple Leaf Disease Detection System | Profile Page</p>
+        </div>
+    </div>
+</body>
+
+</html>

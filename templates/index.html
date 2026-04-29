@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍎</text></svg>">
+    <title>Apple Leaf Disease Detector - Advanced AI System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        /* Apple Theme Colors */
+        :root {
+            --apple-red: #e33b26;
+            --apple-green: #6fae47;
+            --apple-yellow: #fbb93b;
+            --apple-brown: #8b5a2b;
+            --text-dark: #2c3e50;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: white;
+            border-radius: 30px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .navbar h1 {
+            font-size: 2em;
+            color: var(--text-dark);
+        }
+
+        .navbar h1 span {
+            color: var(--apple-red);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-link-home {
+            background: #f0f0f0;
+            color: var(--text-dark);
+        }
+
+        .nav-link-home:hover {
+            background: var(--apple-green);
+            color: white;
+        }
+
+        .nav-link-profile {
+            background: #f0f0f0;
+            color: var(--text-dark);
+        }
+
+        .nav-link-profile:hover {
+            background: var(--apple-yellow);
+            color: var(--text-dark);
+        }
+
+        .nav-link-logout {
+            background: var(--apple-red);
+            color: white;
+        }
+
+        .nav-link-logout:hover {
+            background: #c82333;
+        }
+
+        .welcome-text {
+            color: var(--apple-green);
+            font-weight: 500;
+            padding: 10px 20px;
+            background: #e8f5e9;
+            border-radius: 50px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--apple-red) 0%, var(--apple-green) 100%);
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Main Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Upload Card */
+        .upload-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .upload-card h2 {
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upload-area {
+            border: 3px dashed var(--apple-green);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .upload-area:hover {
+            border-color: var(--apple-red);
+            background: #fff5f5;
+            transform: scale(1.01);
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        #image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 15px;
+            display: none;
+            margin-top: 20px;
+            border: 3px solid var(--apple-green);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            border: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            font-weight: bold;
+        }
+
+        .btn-predict {
+            background: linear-gradient(135deg, var(--apple-green), var(--apple-red));
+            color: white;
+        }
+
+        .btn-predict:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-predict:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-clear {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        /* Results Card */
+        .results-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .results-card h2 {
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        /* Diagnosis Box */
+        .diagnosis-box {
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+            background: linear-gradient(135deg, var(--apple-green), var(--apple-red));
+        }
+
+        .diagnosis-box h3 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .confidence {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Predictions List */
+        .predictions-list {
+            margin-bottom: 20px;
+        }
+
+        .prediction-item {
+            margin: 15px 0;
+        }
+
+        .prediction-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .progress-bar {
+            height: 35px;
+            background: #f0f0f0;
+            border-radius: 17px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--apple-green), var(--apple-red));
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Accuracy Graph */
+        .accuracy-graph {
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+        }
+
+        .accuracy-graph h3 {
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .accuracy-graph img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        /* Top Predictions */
+        .top-predictions {
+            margin: 20px 0;
+        }
+
+        .top-prediction-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--apple-green);
+        }
+
+        .top-prediction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .disease-name {
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .confidence-badge {
+            background: var(--apple-green);
+            color: white;
+            padding: 3px 12px;
+            border-radius: 20px;
+        }
+
+        /* Info Card */
+        .info-card {
+            background: #f8f9fa;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--apple-green);
+        }
+
+        .info-item h4 {
+            color: var(--apple-red);
+            margin-bottom: 8px;
+        }
+
+        .info-item p {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 30px;
+            margin-top: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--apple-red);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Navigation -->
+        <div class="navbar">
+            <h1>🍎 <span>Disease Detector</span></h1>
+            <div class="nav-links">
+                <a href="{{ url_for('landing') }}" class="nav-link-home">🏠 Home</a>
+                {% if user %}
+                <span class="welcome-text">🍃 Welcome, {{ user.username }}!</span>
+                <a href="{{ url_for('profile') }}" class="nav-link-profile">👤 Profile</a>
+                <a href="{{ url_for('history') }}" class="nav-link-profile">📜 History</a>
+                <a href="{{ url_for('logout') }}" class="nav-link-logout">🚪 Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="nav-link-home">🔑 Login</a>
+                <a href="{{ url_for('signup') }}" class="nav-link-profile">📝 Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🍎 Apple Leaf Disease Detection System</h1>
+            <p>Advanced AI-Powered Diagnosis Using Deep Learning</p>
+            <div class="badges">
+                <span class="badge">🎯 98% Accuracy</span>
+                <span class="badge">📱 All Formats Supported</span>
+                <span class="badge">⚡ Real-time Analysis</span>
+                <span class="badge">📊 Accuracy Graphs</span>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid">
+            <!-- Upload Section -->
+            <div class="upload-card">
+                <h2>📤 Upload Leaf Image</h2>
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">🍃</div>
+                    <p>Click or drag & drop to upload</p>
+                    <p style="font-size: 0.9em; color: #999; margin-top: 10px;">
+                        Supports: PNG, JPG, JPEG, GIF, BMP, WEBP, TIFF, and more!
+                    </p>
+                </div>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+                <img id="image-preview" alt="Preview">
+                <div class="button-group">
+                    <button class="btn btn-predict" id="predictBtn" onclick="predict()" disabled>🔍 Analyze
+                        Disease</button>
+                    <button class="btn btn-clear" id="clearBtn" onclick="clearImage()" style="display: none;">🗑️
+                        Clear</button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-card" id="resultsCard" style="display: none;">
+                <h2>📊 Diagnosis Results</h2>
+
+                <!-- Diagnosis Box -->
+                <div class="diagnosis-box" id="diagnosisBox">
+                    <h3 id="diseaseName">-</h3>
+                    <div class="confidence" id="confidenceValue">-</div>
+                </div>
+
+                <!-- Warning -->
+                <div class="warning-box" id="warningBox" style="display: none;">
+                    ⚠️ Low Confidence Prediction - Please consult an expert for verification
+                </div>
+
+                <!-- All Predictions -->
+                <div class="predictions-list" id="predictionsList"></div>
+
+                <!-- Accuracy Graph -->
+                <div class="accuracy-graph" id="accuracyGraph" style="display: none;">
+                    <h3>📈 Prediction Accuracy Trend</h3>
+                    <img id="fullChart" src="" alt="Accuracy Graph">
+                </div>
+
+                <!-- Top Predictions -->
+                <div class="top-predictions" id="topPredictions"></div>
+
+                <!-- Disease Info -->
+                <div class="info-card">
+                    <h3>ℹ️ Treatment Guide</h3>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <h4>📋 Description</h4>
+                            <p id="diseaseDesc">-</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>⚠️ Symptoms</h4>
+                            <p id="diseaseSymptoms">-</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>💊 Treatment</h4>
+                            <p id="diseaseTreatment">-</p>
+                        </div>
+                        <div class="info-item">
+                            <h4>🛡️ Prevention</h4>
+                            <p id="diseasePrevention">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Analyzing leaf image with AI model...</p>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>🍎 Apple Leaf Disease Detection System | Powered by Deep Learning</p>
+            <p style="font-size: 0.9em; opacity: 0.7;">Upload any leaf image for instant diagnosis</p>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+
+        // Format disease name
+        function formatDiseaseName(name) {
+            if (!name) return '-';
+            return name.replace(/_/g, ' ').toLowerCase().split(' ').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+
+        // File input handler
+        document.getElementById('fileInput').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 50 * 1024 * 1024) {
+                    alert('File too large! Maximum size is 50MB.');
+                    return;
+                }
+
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const preview = document.getElementById('image-preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    document.getElementById('predictBtn').disabled = false;
+                    document.getElementById('clearBtn').style.display = 'block';
+                    document.getElementById('uploadArea').style.display = 'none';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#e33b26';
+        });
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#6fae47';
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#6fae47';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                document.getElementById('fileInput').files = e.dataTransfer.files;
+                const event = new Event('change');
+                document.getElementById('fileInput').dispatchEvent(event);
+            }
+        });
+
+        // Clear image
+        function clearImage() {
+            document.getElementById('fileInput').value = '';
+            selectedFile = null;
+            document.getElementById('image-preview').src = '';
+            document.getElementById('image-preview').style.display = 'none';
+            document.getElementById('uploadArea').style.display = 'block';
+            document.getElementById('clearBtn').style.display = 'none';
+            document.getElementById('predictBtn').disabled = true;
+            document.getElementById('resultsCard').style.display = 'none';
+        }
+
+        // Predict function
+        async function predict() {
+            if (!selectedFile) return;
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultsCard').style.display = 'none';
+            document.getElementById('predictBtn').disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('predictBtn').disabled = false;
+            }
+        }
+
+        // Display results
+        function displayResults(data) {
+            document.getElementById('resultsCard').style.display = 'block';
+
+            // Diagnosis box
+            document.getElementById('diseaseName').textContent = formatDiseaseName(data.best_class);
+            document.getElementById('confidenceValue').textContent = data.best_confidence.toFixed(1) + '%';
+
+            // Warning
+            if (!data.is_confident) {
+                document.getElementById('warningBox').style.display = 'block';
+            } else {
+                document.getElementById('warningBox').style.display = 'none';
+            }
+
+            // All predictions
+            const predictionsList = document.getElementById('predictionsList');
+            predictionsList.innerHTML = '<h3>All Predictions</h3>';
+
+            const order = ['BLACK APPLE ROT LEAVES', 'HEALTHY LEAVES', 'CEDAR RUST LEAVES', 'SCAB LEAVES'];
+            for (const disease of order) {
+                const conf = data.predictions[disease] || 0;
+                const item = document.createElement('div');
+                item.className = 'prediction-item';
+                item.innerHTML = `
+                    <div class="prediction-label">
+                        <span>${formatDiseaseName(disease)}</span>
+                        <span>${conf.toFixed(1)}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${conf}%">${conf.toFixed(1)}%</div>
+                    </div>
+                `;
+                predictionsList.appendChild(item);
+            }
+
+            // Accuracy graph
+            if (data.charts && data.charts.full) {
+                document.getElementById('accuracyGraph').style.display = 'block';
+                document.getElementById('fullChart').src = 'data:image/png;base64,' + data.charts.full;
+            }
+
+            // Top predictions
+            const topDiv = document.getElementById('topPredictions');
+            if (data.top_predictions && data.top_predictions.length > 0) {
+                topDiv.innerHTML = '<h3>🎯 Top Predictions</h3>';
+                data.top_predictions.forEach(pred => {
+                    const card = document.createElement('div');
+                    card.className = 'top-prediction-card';
+                    card.innerHTML = `
+                        <div class="top-prediction-header">
+                            <span class="disease-name">${formatDiseaseName(pred.class)}</span>
+                            <span class="confidence-badge">${pred.confidence.toFixed(1)}%</span>
+                        </div>
+                        <p style="color: #666; font-size: 0.9em;">${pred.info ? pred.info.description || '' : ''}</p>
+                    `;
+                    topDiv.appendChild(card);
+                });
+            }
+
+            // Disease info
+            if (data.disease_info) {
+                document.getElementById('diseaseDesc').textContent = data.disease_info.description || '-';
+                document.getElementById('diseaseSymptoms').textContent = data.disease_info.symptoms || '-';
+                document.getElementById('diseaseTreatment').textContent = data.disease_info.treatment || '-';
+                document.getElementById('diseasePrevention').textContent = data.disease_info.prevention || '-';
+            }
+
+            // Scroll to results
+            document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Keyboard shortcut: C to clear
+        document.addEventListener('keydown', function (e) {
+            if ((e.key === 'c' || e.key === 'C') && document.getElementById('clearBtn').style.display === 'block') {
+                clearImage();
+            }
+        });
+    </script>
+</body>
+
+</html>

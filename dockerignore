@@ -1,0 +1,11 @@
+venv/
+env/
+__pycache__/
+*.pyc
+.git/
+.gitignore
+README.md
+.DS_Store
+*.log
+*.db
+!users.db  # Keep database if needed

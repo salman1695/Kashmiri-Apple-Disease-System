@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍎</text></svg>">
+    <title>Login - Apple Leaf Disease Detector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            background: linear-gradient(135deg, #e33b26 0%, #6fae47 100%);
+            overflow-y: auto;
+            /* Important: Allow vertical scrolling */
+        }
+
+        /* Animated Apple Background */
+        .apple-bg {
+            position: fixed;
+            /* Fixed instead of absolute */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+            /* Allow clicking through */
+        }
+
+        .floating-apple {
+            position: absolute;
+            font-size: 3em;
+            opacity: 0.15;
+            animation: floatApple 8s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes floatApple {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            25% {
+                transform: translateY(-20px) rotate(5deg);
+            }
+
+            50% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            75% {
+                transform: translateY(20px) rotate(-5deg);
+            }
+        }
+
+        /* Falling Apples Animation */
+        .falling-apple {
+            position: absolute;
+            font-size: 2.5em;
+            opacity: 0.2;
+            top: -50px;
+            animation: fall 10s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-50px) rotate(0deg);
+                opacity: 0.2;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0.1;
+            }
+        }
+
+        /* Apple Theme Colors */
+        :root {
+            --apple-red: #e33b26;
+            --apple-green: #6fae47;
+            --apple-yellow: #fbb93b;
+            --apple-brown: #8b5a2b;
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --shadow: 0 10px 40px rgba(227, 59, 38, 0.2);
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 500px;
+            /* Slightly increased */
+            margin: 20px auto;
+            /* Center with margin */
+            position: relative;
+            z-index: 10;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.5s ease-out;
+            max-height: none;
+            /* Remove max-height restriction */
+            overflow: visible;
+            /* Allow content to expand */
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Apple Pattern Border */
+        .auth-container::before {
+            content: "🍎🍏🍎🍏";
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            font-size: 2em;
+            opacity: 0.1;
+            white-space: nowrap;
+            animation: slidePattern 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes slidePattern {
+            from {
+                transform: translateX(-50%);
+            }
+
+            to {
+                transform: translateX(0%);
+            }
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, var(--apple-red) 0%, var(--apple-green) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: 30px 30px 0 0;
+        }
+
+        /* Animated Apples in Header */
+        .auth-header::before {
+            content: "🍎";
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            font-size: 8em;
+            opacity: 0.2;
+            animation: rotateApple 20s infinite linear;
+        }
+
+        .auth-header::after {
+            content: "🍏";
+            position: absolute;
+            bottom: -30px;
+            right: -30px;
+            font-size: 10em;
+            opacity: 0.15;
+            animation: rotateAppleReverse 15s infinite linear;
+        }
+
+        @keyframes rotateApple {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rotateAppleReverse {
+            from {
+                transform: rotate(360deg);
+            }
+
+            to {
+                transform: rotate(0deg);
+            }
+        }
+
+        .auth-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .auth-header p {
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            font-size: 1.1em;
+        }
+
+        .auth-body {
+            padding: 40px;
+            position: relative;
+            overflow-y: visible;
+            /* Allow vertical scrolling */
+            max-height: none;
+            /* Remove max-height */
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            /* Increased spacing */
+            animation: fadeIn 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .form-group:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .form-group:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group label i {
+            margin-right: 5px;
+            color: var(--apple-red);
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+            color: var(--apple-green);
+            z-index: 1;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1em;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--apple-red);
+            box-shadow: 0 0 0 4px rgba(227, 59, 38, 0.1);
+            background: white;
+            transform: scale(1.02);
+        }
+
+        .form-group input:hover {
+            border-color: var(--apple-green);
+        }
+
+        /* Remember Me & Forgot Password */
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            animation: fadeIn 0.5s ease-out 0.25s both;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--apple-green);
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            color: var(--apple-red);
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .forgot-password:hover {
+            color: var(--apple-green);
+            transform: translateX(3px);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--apple-red) 0%, var(--apple-green) 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(227, 59, 38, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(227, 59, 38, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(227, 59, 38, 0);
+            }
+        }
+
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(227, 59, 38, 0.4);
+        }
+
+        .btn-login::before {
+            content: "🍎";
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            transition: all 0.3s;
+            opacity: 0;
+        }
+
+        .btn-login:hover::before {
+            left: 20px;
+            opacity: 1;
+        }
+
+        .btn-login::after {
+            content: "🍏";
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            transition: all 0.3s;
+            opacity: 0;
+        }
+
+        .btn-login:hover::after {
+            right: 20px;
+            opacity: 1;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            color: #666;
+            animation: fadeIn 0.5s ease-out 0.3s both;
+        }
+
+        .auth-footer a {
+            color: var(--apple-red);
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            padding: 5px 10px;
+        }
+
+        .auth-footer a:hover {
+            color: var(--apple-green);
+        }
+
+        .auth-footer a::after {
+            content: "🍎";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2em;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .auth-footer a:hover::after {
+            bottom: -25px;
+            opacity: 1;
+            animation: bounce 0.5s;
+        }
+
+        .flash-messages {
+            margin-bottom: 25px;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        .flash-message {
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .flash-message::before {
+            font-size: 1.3em;
+        }
+
+        .flash-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .flash-success::before {
+            content: "🍏";
+        }
+
+        .flash-error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        .flash-error::before {
+            content: "🍎";
+        }
+
+        .flash-info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #90caf9;
+        }
+
+        .flash-info::before {
+            content: "📘";
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            z-index: 10;
+            position: relative;
+            animation: fadeIn 0.5s ease-out 0.4s both;
+        }
+
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.9;
+            font-size: 1.1em;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-link a:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateX(-5px);
+        }
+
+        .back-link a::before {
+            content: "🍎";
+            transition: all 0.3s;
+        }
+
+        .back-link a:hover::before {
+            transform: translateX(-5px);
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid var(--apple-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                justify-content: flex-start;
+                /* Start from top on mobile */
+                padding-top: 20px;
+                padding-bottom: 20px;
+            }
+
+            .auth-container {
+                max-width: 100%;
+                margin: 10px auto;
+            }
+
+            .auth-header {
+                padding: 30px;
+            }
+
+            .auth-header h1 {
+                font-size: 2em;
+            }
+
+            .auth-header p {
+                font-size: 1em;
+            }
+
+            .auth-body {
+                padding: 30px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-group input {
+                padding: 12px 12px 12px 40px;
+            }
+
+            .floating-apple,
+            .falling-apple {
+                font-size: 2em;
+            }
+
+            .btn-login {
+                padding: 14px;
+                font-size: 1.1em;
+            }
+
+            .back-link {
+                margin-top: 15px;
+            }
+
+            .form-options {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .auth-header {
+                padding: 25px;
+            }
+
+            .auth-header h1 {
+                font-size: 1.8em;
+            }
+
+            .auth-body {
+                padding: 25px;
+            }
+
+            .btn-login {
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Animated Apple Background -->
+    <div class="apple-bg">
+        <!-- Floating Apples -->
+        <div class="floating-apple" style="top: 10%; left: 5%; animation-delay: 0s;">🍎</div>
+        <div class="floating-apple" style="top: 20%; right: 8%; animation-delay: 1s;">🍏</div>
+        <div class="floating-apple" style="bottom: 15%; left: 10%; animation-delay: 2s;">🍎</div>
+        <div class="floating-apple" style="bottom: 25%; right: 15%; animation-delay: 3s;">🍏</div>
+        <div class="floating-apple" style="top: 40%; left: 20%; animation-delay: 4s;">🍎</div>
+        <div class="floating-apple" style="top: 60%; right: 25%; animation-delay: 5s;">🍏</div>
+
+        <!-- Falling Apples -->
+        <div class="falling-apple" style="left: 5%; animation-delay: 0s;">🍎</div>
+        <div class="falling-apple" style="left: 25%; animation-delay: 2s;">🍏</div>
+        <div class="falling-apple" style="left: 45%; animation-delay: 4s;">🍎</div>
+        <div class="falling-apple" style="left: 65%; animation-delay: 6s;">🍏</div>
+        <div class="falling-apple" style="left: 85%; animation-delay: 8s;">🍎</div>
+        <div class="falling-apple" style="left: 15%; animation-delay: 10s;">🍏</div>
+        <div class="falling-apple" style="left: 35%; animation-delay: 12s;">🍎</div>
+        <div class="falling-apple" style="left: 55%; animation-delay: 14s;">🍏</div>
+        <div class="falling-apple" style="left: 75%; animation-delay: 16s;">🍎</div>
+        <div class="falling-apple" style="left: 95%; animation-delay: 18s;">🍏</div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Login Container -->
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>🍎 Welcome Back</h1>
+            <p>Login to your account</p>
+        </div>
+
+        <div class="auth-body">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash-message flash-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Login Form -->
+            <form method="POST" action="{{ url_for('login') }}" id="loginForm">
+                <div class="form-group">
+                    <label><i>👤</i> Username or Email</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📧</span>
+                        <input type="text" name="username" required placeholder="Enter your username or email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label><i>🔒</i> Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔑</span>
+                        <input type="password" name="password" required placeholder="Enter your password">
+                    </div>
+                </div>
+
+                <!-- Optional: Remember me & Forgot password -->
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember"> Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span>Login</span>
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Home Link -->
+    <div class="back-link">
+        <a href="{{ url_for('landing') }}">← Back to Home</a>
+    </div>
+
+    <!-- JavaScript for Loading Animation -->
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function () {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('loginBtn').disabled = true;
+
+            // Safety: re-enable after 5 seconds if redirect fails
+            setTimeout(function () {
+                document.getElementById('loginBtn').disabled = false;
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }, 5000);
+        });
+
+        // Hide spinner on page load (back button case)
+        window.addEventListener('pageshow', function (event) {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('loginBtn').disabled = false;
+        });
+
+        // Ensure page scrolls to top on load
+        window.onload = function () {
+            window.scrollTo(0, 0);
+        };
+
+        // Optional: Add floating apples on hover
+        document.querySelectorAll('.form-group input').forEach(input => {
+            input.addEventListener('focus', function () {
+                this.style.transition = 'all 0.3s';
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍎</text></svg>">
+    <title>History - Apple Leaf Disease Detector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+            background: linear-gradient(135deg, rgba(227, 59, 38, 0.05) 0%, rgba(111, 174, 71, 0.05) 100%);
+        }
+
+        /* Background Image with Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=600');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        /* Apple Theme Colors */
+        :root {
+            --apple-red: #e33b26;
+            --apple-green: #6fae47;
+            --apple-yellow: #fbb93b;
+            --apple-brown: #8b5a2b;
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+            --shadow: 0 10px 30px rgba(227, 59, 38, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-bottom: 4px solid var(--apple-green);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "📸";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8em;
+            opacity: 0.1;
+            transform: rotate(15deg);
+        }
+
+        .header h1 {
+            font-size: 2.8em;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .header h1 span {
+            color: var(--apple-red);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(227, 59, 38, 0.1);
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .stat-item strong {
+            color: var(--apple-red);
+            font-size: 1.2em;
+        }
+
+        /* Image Grid */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .image-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 1px solid rgba(227, 59, 38, 0.1);
+            position: relative;
+        }
+
+        .image-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(227, 59, 38, 0.2);
+            border-color: var(--apple-red);
+        }
+
+        .image-card::before {
+            content: "🍎";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2em;
+            opacity: 0.2;
+            z-index: 1;
+        }
+
+        .image-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--apple-green);
+            transition: all 0.3s;
+        }
+
+        .image-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .image-info {
+            padding: 20px;
+            background: white;
+        }
+
+        .image-info h3 {
+            margin: 0 0 10px 0;
+            color: var(--text-dark);
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .image-info h3::before {
+            content: "🍃";
+            font-size: 1.2em;
+        }
+
+        .image-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .image-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .image-date i {
+            font-style: normal;
+            font-size: 1.1em;
+        }
+
+        .image-time {
+            background: #f8f9fa;
+            padding: 4px 10px;
+            border-radius: 50px;
+            color: var(--apple-red);
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .view-btn {
+            background: var(--apple-green);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .view-btn:hover {
+            background: var(--apple-red);
+            transform: translateX(3px);
+        }
+
+        /* No Images State */
+        .no-images {
+            text-align: center;
+            padding: 80px 40px;
+            background: white;
+            border-radius: 30px;
+            color: #666;
+            box-shadow: var(--shadow);
+            border: 2px dashed var(--apple-red);
+            margin-top: 30px;
+        }
+
+        .no-images-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .no-images h3 {
+            font-size: 2em;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+        }
+
+        .no-images p {
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            color: #666;
+        }
+
+        .btn-primary {
+            background: var(--apple-red);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--apple-green);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(111, 174, 71, 0.4);
+        }
+
+        /* Navigation */
+        .nav {
+            margin: 20px 0;
+            text-align: center;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav a {
+            color: var(--text-dark);
+            text-decoration: none;
+            padding: 12px 30px;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid transparent;
+        }
+
+        .nav a:hover {
+            background: var(--apple-red);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(227, 59, 38, 0.3);
+        }
+
+        .nav a:nth-child(2):hover {
+            background: var(--apple-green);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border-top: 4px solid var(--apple-green);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: "🍏";
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            font-size: 8em;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+        }
+
+        .footer p {
+            color: #666;
+            margin: 10px 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .image-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav a {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .stats-bar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📸 <span>Prediction</span> History</h1>
+            <p>Recently analyzed apple leaf images</p>
+
+            <!-- Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span>📊 Total Images:</span>
+                    <strong>{{ images|length if images else 0 }}</strong>
+                </div>
+                <div class="stat-item">
+                    <span>🍎 Latest Analysis:</span>
+                    <strong>{{ images[0].date if images else 'No data' }}</strong>
+                </div>
+                <div class="stat-item">
+                    <span>📅 Last 7 Days:</span>
+                    <strong>{{ images|selectattr('date', '>=', '2024')|list|length if images else 0 }}</strong>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav">
+                <a href="{{ url_for('landing') }}">🏠 Home</a>
+                <a href="{{ url_for('about') }}">📖 About</a>
+                {% if session.get('user_id') %}
+                <a href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                <a href="{{ url_for('profile') }}">👤 Profile</a>
+                <a href="{{ url_for('logout') }}" style="background: #f8f9fa;">🚪 Logout</a>
+                {% else %}
+                <a href="{{ url_for('login') }}">🔑 Login</a>
+                <a href="{{ url_for('signup') }}" style="background: var(--apple-red); color: white;">📝 Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Image Grid -->
+        {% if images %}
+        <div class="image-grid">
+            {% for img in images %}
+            <div class="image-card">
+                <img src="{{ img.path }}" alt="{{ img.filename }}" loading="lazy">
+                <div class="image-info">
+                    <h3>{{ img.filename[:25] }}{% if img.filename|length > 25 %}...{% endif %}</h3>
+
+                    <!-- Better Date/Time Display -->
+                    <div class="image-meta">
+                        <div class="image-date">
+                            <i>📅</i>
+                            {% if img.date is string %}
+                            {% if ' ' in img.date %}
+                            {% set parts = img.date.split(' ') %}
+                            <span>{{ parts[0] }}</span>
+                            <span class="image-time">{{ parts[1] if parts|length > 1 else '' }}</span>
+                            {% else %}
+                            <span>{{ img.date }}</span>
+                            {% endif %}
+                            {% else %}
+                            <span>{{ img.date }}</span>
+                            {% endif %}
+                        </div>
+                        <a href="{{ img.path }}" target="_blank" class="view-btn">
+                            <span>👁️</span> View
+                        </a>
+                    </div>
+
+                    <!-- Additional Info (if available) -->
+                    {% if img.prediction %}
+                    <div style="margin-top: 10px; font-size: 0.85em; color: var(--apple-green);">
+                        🍎 {{ img.prediction }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- No Images State -->
+        <div class="no-images">
+            <div class="no-images-icon">🍃</div>
+            <h3>No Images Analyzed Yet</h3>
+            <p>Start by uploading some apple leaf images to see your prediction history here!</p>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('login') }}"
+                    class="btn-primary">
+                    {% if session.get('user_id') %}📤 Upload Image{% else %}🔑 Login to Start{% endif %}
+                </a>
+                <a href="{{ url_for('landing') }}" class="btn-primary" style="background: var(--apple-green);">
+                    🏠 Go to Home
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Footer -->
+        <div class="footer">
+            <p class="highlight" style="color: var(--apple-red); font-weight: bold;">🍎 Apple Leaf Disease Detection
+                System</p>
+            <p>Final Year Project | Computer Science</p>
+            <p style="font-size: 0.9em;">📸 {{ images|length if images else 0 }} images in history</p>
+            <p style="font-size: 0.85em; opacity: 0.7;">© 2026 All Rights Reserved</p>
+        </div>
+    </div>
+
+    <!-- Optional: Add JavaScript for better date formatting -->
+    <script>
+        // Format dates nicely if needed
+        document.addEventListener('DOMContentLoaded', function () {
+            const dateElements = document.querySelectorAll('.image-date');
+            dateElements.forEach(el => {
+                const text = el.innerText;
+                if (text.includes('2024')) {
+                    // Date is already formatted in backend
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

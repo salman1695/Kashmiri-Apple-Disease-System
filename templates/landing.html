@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍎</text></svg>">
+    <title>Apple Leaf Disease Detector</title>
+    <nav class="navbar">
+        <a href="{{ url_for('landing') }}" class="logo">
+            <span>🍎</span> Apple<span>Detect</span>
+        </a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#diseases">Diseases</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#team">Team</a>
+            <a href="{{ url_for('login') }}" class="btn-outline-nav">Login</a>
+            <a href="{{ url_for('signup') }}" class="btn-nav">Sign Up</a>
+        </div>
+    </nav>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Apple Theme Colors */
+        :root {
+            --apple-red: #e33b26;
+            --apple-green: #6fae47;
+            --apple-yellow: #fbb93b;
+            --apple-brown: #8b5a2b;
+            --leaf-green: #2e7d32;
+            --light-green: #e8f5e9;
+            --light-red: #ffebee;
+            --text-dark: #2c3e50;
+            --text-light: #ecf0f1;
+        }
+
+        /* Navigation */
+        .navbar {
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            box-shadow: 0 2px 20px rgba(227, 59, 38, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: var(--apple-red);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            color: var(--apple-green);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--apple-red);
+        }
+
+        .btn-nav {
+            background: var(--apple-red);
+            color: white !important;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+        }
+
+        .btn-nav:hover {
+            background: var(--apple-green);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(111, 174, 71, 0.3);
+        }
+
+        .btn-outline-nav {
+            border: 2px solid var(--apple-red);
+            color: var(--apple-red) !important;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+        }
+
+        .btn-outline-nav:hover {
+            background: var(--apple-red);
+            color: white !important;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 50px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            margin-top: 80px;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            color: var(--text-dark);
+        }
+
+        .hero h1 span.apple-red {
+            color: var(--apple-red);
+        }
+
+        .hero h1 span.apple-green {
+            color: var(--apple-green);
+        }
+
+        .hero h1 span.apple-yellow {
+            color: var(--apple-yellow);
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn-primary {
+            background: var(--apple-red);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--apple-green);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(111, 174, 71, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--apple-red);
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            border: 2px solid var(--apple-red);
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--apple-red);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .hero-image {
+            position: absolute;
+            right: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 600px;
+            z-index: 1;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(-50%);
+            }
+
+            50% {
+                transform: translateY(-55%);
+            }
+        }
+
+        /* Apple Decoration */
+        .apple-decoration {
+            position: absolute;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .apple-1 {
+            top: 20%;
+            left: 5%;
+            font-size: 10em;
+            transform: rotate(-15deg);
+        }
+
+        .apple-2 {
+            bottom: 10%;
+            right: 5%;
+            font-size: 8em;
+            transform: rotate(25deg);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 50px;
+            background: white;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .section-title span.apple-red {
+            color: var(--apple-red);
+        }
+
+        .section-title span.apple-green {
+            color: var(--apple-green);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            border-bottom: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: "🍎";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 8em;
+            opacity: 0.05;
+            transform: rotate(15deg);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-bottom-color: var(--apple-red);
+            box-shadow: 0 20px 40px rgba(227, 59, 38, 0.1);
+        }
+
+        .feature-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Disease Classes Section */
+        .diseases {
+            padding: 100px 50px;
+            background: linear-gradient(135deg, #fff5f5 0%, #f0f9f0 100%);
+        }
+
+        .diseases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .disease-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .disease-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(227, 59, 38, 0.2);
+        }
+
+        .disease-header {
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .disease-rot {
+            background: var(--apple-red);
+        }
+
+        .disease-healthy {
+            background: var(--apple-green);
+        }
+
+        .disease-blotch {
+            background: var(--apple-yellow);
+            color: #333;
+        }
+
+        .disease-scab {
+            background: var(--apple-brown);
+        }
+
+        .disease-header h3 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .disease-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .disease-body {
+            padding: 30px;
+        }
+
+        .disease-body p {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .disease-body i {
+            font-size: 1.2em;
+        }
+
+        .severity {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .severity-high {
+            background: #ffebee;
+            color: var(--apple-red);
+        }
+
+        .severity-medium {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .severity-low {
+            background: #e8f5e9;
+            color: var(--apple-green);
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 100px 50px;
+            background: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #fff5f5, #f0f9f0);
+            border-radius: 20px;
+        }
+
+        .stat-number {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: var(--apple-red);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--text-dark);
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 100px 50px;
+            background: linear-gradient(135deg, var(--apple-red) 0%, var(--apple-green) 100%);
+            color: white;
+        }
+
+        .how-it-works .section-title {
+            color: white;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: white;
+            color: var(--apple-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        .step-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .step-card p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Team Section */
+        .team {
+            padding: 100px 50px;
+            background: white;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .team-card {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            transition: all 0.3s;
+            border: 1px solid #e0e0e0;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--apple-red);
+            box-shadow: 0 20px 40px rgba(227, 59, 38, 0.1);
+        }
+
+        .team-avatar {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, var(--apple-red), var(--apple-green));
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: white;
+            border: 4px solid white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .team-role {
+            color: var(--apple-red);
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .team-bio {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 100px 50px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8f5e9 100%);
+            text-align: center;
+        }
+
+        .cta h2 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        .cta h2 span {
+            color: var(--apple-red);
+        }
+
+        .cta p {
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            color: #666;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .cta-btn-primary {
+            background: var(--apple-red);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .cta-btn-primary:hover {
+            background: var(--apple-green);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(111, 174, 71, 0.4);
+        }
+
+        .cta-btn-secondary {
+            background: transparent;
+            color: var(--apple-red);
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            border: 2px solid var(--apple-red);
+            transition: all 0.3s;
+        }
+
+        .cta-btn-secondary:hover {
+            background: var(--apple-red);
+            color: white;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 60px 50px 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto 40px;
+        }
+
+        .footer-section h3 {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: var(--apple-yellow);
+        }
+
+        .footer-section p {
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            opacity: 0.8;
+            display: block;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+
+        .footer-section a:hover {
+            opacity: 1;
+            transform: translateX(5px);
+            color: var(--apple-yellow);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background: var(--apple-red);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.6;
+            font-size: 0.9em;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .navbar {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding: 120px 20px 50px;
+            }
+
+            .hero h1 {
+                font-size: 2.5em;
+            }
+
+            .hero-image {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                width: 100%;
+                margin-top: 50px;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-btn-primary,
+            .cta-btn-secondary {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Apple Decorations -->
+    <div class="apple-decoration apple-1">🍎</div>
+    <div class="apple-decoration apple-2">🍏</div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="/" class="logo">
+            <span>🍎</span> Apple<span>Detect</span>
+        </a>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#diseases">Diseases</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#team">Team</a>
+            <a href="{{ url_for('login') }}" class="btn-outline-nav">Login</a>
+            <a href="{{ url_for('signup') }}" class="btn-nav">Sign Up</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>
+                <span class="apple-red">Apple Leaf</span><br>
+                <span class="apple-green">Disease Detection</span><br>
+                <span class="apple-yellow">Made Easy</span>
+            </h1>
+            <p>Advanced AI-powered system that identifies apple leaf diseases with <strong>95% accuracy</strong>. Upload
+                a photo and get instant diagnosis, treatment recommendations, and prevention tips.</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('signup') }}" class="btn-primary">Get Started →</a>
+                <a href="#features" class="btn-secondary">Learn More</a>
+            </div>
+        </div>
+        <img src="https://images.pexels.com/photos/102104/pexels-photo-102104.jpeg?auto=compress&cs=tinysrgb&w=600"
+            alt="Hero" class="hero-image">
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <h2 class="section-title">Why Choose <span class="apple-red">Our System?</span></h2>
+        <p class="section-subtitle">Professional apple leaf disease detection powered by deep learning</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🍎</div>
+                <h3>95% Accuracy</h3>
+                <p>Deep learning model trained on thousands of apple leaf images for precise disease detection.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Instant Results</h3>
+                <p>Get predictions in seconds. Just upload an image and our AI will analyze it immediately.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Detailed Analysis</h3>
+                <p>View confidence scores, top predictions, and detailed disease information with visual charts.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💊</div>
+                <h3>Treatment Plans</h3>
+                <p>Get expert treatment recommendations and prevention tips for each detected disease.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>User Friendly</h3>
+                <p>Simple and intuitive interface. No technical knowledge required to use the system.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure & Private</h3>
+                <p>Your data is safe with us. All images are processed securely and stored privately.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Disease Classes Section -->
+    <section class="diseases" id="diseases">
+        <h2 class="section-title">Diseases We <span class="apple-green">Detect</span></h2>
+        <p class="section-subtitle">Comprehensive detection for common apple leaf diseases</p>
+        <div class="diseases-grid">
+            <div class="disease-card">
+                <div class="disease-header disease-rot">
+                    <div class="disease-icon">🍎</div>
+                    <h3>Apple Rot</h3>
+                </div>
+                <div class="disease-body">
+                    <p><i>🔴</i> <strong>Symptoms:</strong> Brown spots, decaying tissue, foul smell</p>
+                    <p><i>💊</i> <strong>Treatment:</strong> Apply fungicide, remove infected leaves</p>
+                    <p><i>🛡️</i> <strong>Prevention:</strong> Proper spacing, avoid overhead watering</p>
+                    <span class="severity severity-high">⚠️ High Severity</span>
+                </div>
+            </div>
+            <div class="disease-card">
+                <div class="disease-header disease-healthy">
+                    <div class="disease-icon">🍏</div>
+                    <h3>Healthy Leaf</h3>
+                </div>
+                <div class="disease-body">
+                    <p><i>✅</i> <strong>Symptoms:</strong> Green color, no spots, normal texture</p>
+                    <p><i>💚</i> <strong>Treatment:</strong> No treatment needed</p>
+                    <p><i>🌱</i> <strong>Prevention:</strong> Regular monitoring, proper care</p>
+                    <span class="severity severity-low">✅ No Issue</span>
+                </div>
+            </div>
+            <div class="disease-card">
+                <div class="disease-header disease-blotch">
+                    <div class="disease-icon">🍂</div>
+                    <h3>Leaf Blotch</h3>
+                </div>
+                <div class="disease-body">
+                    <p><i>🟡</i> <strong>Symptoms:</strong> Irregular brown/yellow patches, leaf curling</p>
+                    <p><i>💊</i> <strong>Treatment:</strong> Apply copper-based fungicide</p>
+                    <p><i>🛡️</i> <strong>Prevention:</strong> Good air circulation, avoid wet leaves</p>
+                    <span class="severity severity-medium">📊 Medium Severity</span>
+                </div>
+            </div>
+            <div class="disease-card">
+                <div class="disease-header disease-scab">
+                    <div class="disease-icon">🍁</div>
+                    <h3>Apple Scab</h3>
+                </div>
+                <div class="disease-body">
+                    <p><i>⚫</i> <strong>Symptoms:</strong> Olive-green to black spots, cracked leaves</p>
+                    <p><i>💊</i> <strong>Treatment:</strong> Sulfur spray, remove infected leaves</p>
+                    <p><i>🛡️</i> <strong>Prevention:</strong> Resistant varieties, proper sanitation</p>
+                    <span class="severity severity-high">⚠️ High Severity</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number"> 10,000+ </div>
+                <div class="stat-label">Images Trained</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">95%</div>
+                <div class="stat-label">Accuracy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Disease Classes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Availability</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="how-it-works">
+        <h2 class="section-title">How It <span style="color: #fbb93b;">Works</span></h2>
+        <p class="section-subtitle" style="color: white; opacity: 0.9;">Simple 4-step process to detect diseases</p>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Upload Image</h3>
+                <p>Take a photo of an apple leaf or upload an existing image from your device.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>AI Analysis</h3>
+                <p>Our deep learning model analyzes the leaf and identifies any diseases present.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Get Results</h3>
+                <p>Receive instant diagnosis with confidence scores and detailed information.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h3>Take Action</h3>
+                <p>Follow treatment recommendations to protect your apple trees.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team" id="team">
+        <h2 class="section-title">Our <span class="apple-red">Team</span></h2>
+        <p class="section-subtitle">Meet the developers behind this project</p>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-avatar">👨‍💻</div>
+                <h3>Usman Saqib</h3>
+                <div class="team-role">Lead Developer</div>
+                <p class="team-bio">Deep Learning & Flask Expert. Responsible for model training and backend
+                    development.</p>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">👨‍🔬</div>
+                <h3>Rehan Muslim</h3>
+                <div class="team-role">Frontend Designer</div>
+                <p class="team-bio">UI/UX Designer. Created the beautiful and intuitive user interface.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <h2>Ready to Protect <span>Your Apple Trees?</span></h2>
+        <p>Join thousands of farmers and gardeners who use our system to detect and prevent apple leaf diseases.</p>
+        <div class="cta-buttons">
+            <a href="{{ url_for('signup') }}" class="cta-btn-primary">Create Free Account</a>
+            <a href="{{ url_for('login') }}" class="cta-btn-secondary">Login to Dashboard</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>🍎 AppleDetect</h3>
+                <p>Advanced AI-powered apple leaf disease detection system for farmers and gardeners.</p>
+                <p>Final Year Project - Computer Science</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="#features">Features</a>
+                <a href="#diseases">Diseases</a>
+                <a href="#how-it-works">How It Works</a>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <p style="margin-top: 20px;">📧 info@appledetect.com</p>
+                <p>📞 +92 300 1234567</p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2026 All rights reserved. | Final Year Project</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">🍎 AI-Apple Leaf Disease Detection</p>
+        </div>
+    </footer>
+
+    <!-- Smooth Scroll -->
+    <script>
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
